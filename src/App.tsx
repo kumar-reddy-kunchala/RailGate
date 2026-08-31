@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import { Sidebar } from "./components/Sidebar";
+import { AdminMobileNav } from "./components/AdminMobileNav";
 import { NotificationToast } from "./components/NotificationToast";
 
 import { WelcomeScreen } from "./screens/WelcomeScreen";
@@ -61,11 +62,14 @@ const MainRouter: React.FC = () => {
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans selection:bg-blue-500 selection:text-white">
       {!isFullScreen && <Header />}
       {isAdminScreen ? (
-        <div className="flex flex-1">
-          <div className="hidden lg:block">
-            <Sidebar />
+        <div className="flex flex-col flex-1 min-w-0">
+          <AdminMobileNav />
+          <div className="flex flex-1 min-w-0">
+            <div className="hidden lg:block shrink-0">
+              <Sidebar />
+            </div>
+            <div className="flex-1 min-w-0 bg-slate-50 w-full overflow-x-hidden">{renderScreen()}</div>
           </div>
-          <div className="flex-1 min-w-0 bg-slate-50">{renderScreen()}</div>
         </div>
       ) : (
         <div className="flex-1 flex flex-col">{renderScreen()}</div>

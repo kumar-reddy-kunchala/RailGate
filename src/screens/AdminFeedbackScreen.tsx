@@ -146,23 +146,23 @@ export const AdminFeedbackScreen: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col">
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-6">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col w-full">
+      <main className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 py-5 sm:py-8 flex-1 w-full space-y-4 sm:space-y-6">
         {/* Page Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3">
-              <MessageSquare className="w-8 h-8 text-blue-600" />
-              User Feedback & Reviews
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2 sm:gap-3">
+              <MessageSquare className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600 shrink-0" />
+              <span>User Feedback & Reviews</span>
             </h1>
-            <p className="text-slate-500 text-sm mt-1">
+            <p className="text-slate-500 text-xs sm:text-sm mt-0.5 sm:mt-1">
               Monitor, review, and manage feedback submitted by public citizens and gate commuters
             </p>
           </div>
 
           <button
             onClick={fetchFeedbacks}
-            className="self-start md:self-auto px-4 py-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all flex items-center gap-2 shadow-xs cursor-pointer active:scale-98"
+            className="self-start sm:self-auto px-3.5 py-2 sm:py-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all flex items-center gap-2 shadow-xs cursor-pointer active:scale-98"
           >
             <RefreshCw className={`w-3.5 h-3.5 text-blue-600 ${loading ? "animate-spin" : ""}`} />
             <span>Refresh Feedbacks</span>
@@ -170,70 +170,70 @@ export const AdminFeedbackScreen: React.FC = () => {
         </div>
 
         {/* 4 Feedback Metrics Summary Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {/* Card 1: Total Submissions */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs flex items-center justify-between">
+          <div className="bg-white border border-slate-200 rounded-xl sm:rounded-2xl p-3.5 sm:p-5 shadow-xs flex items-center justify-between">
             <div>
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Submissions</p>
-              <div className="text-2xl font-extrabold text-slate-900 mt-1">{feedbackCounts.total}</div>
+              <p className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">Total</p>
+              <div className="text-lg sm:text-2xl font-extrabold text-slate-900 mt-0.5 sm:mt-1">{feedbackCounts.total}</div>
             </div>
-            <div className="w-11 h-11 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600">
-              <MessageSquare className="w-5 h-5" />
+            <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 shrink-0">
+              <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
           </div>
 
           {/* Card 2: Average Rating */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs flex items-center justify-between">
+          <div className="bg-white border border-slate-200 rounded-xl sm:rounded-2xl p-3.5 sm:p-5 shadow-xs flex items-center justify-between">
             <div>
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Average Rating</p>
-              <div className="text-2xl font-extrabold text-amber-600 mt-1 flex items-center gap-1.5">
+              <p className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">Avg Rating</p>
+              <div className="text-lg sm:text-2xl font-extrabold text-amber-600 mt-0.5 sm:mt-1 flex items-center gap-1">
                 <span>{feedbackCounts.avgRating}</span>
-                <span className="text-xs text-slate-400 font-semibold">/ 5.0</span>
+                <span className="text-[10px] sm:text-xs text-slate-400 font-semibold">/ 5</span>
               </div>
             </div>
-            <div className="w-11 h-11 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-500">
-              <Star className="w-5 h-5 fill-amber-400" />
+            <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-500 shrink-0">
+              <Star className="w-4 h-4 sm:w-5 sm:h-5 fill-amber-400" />
             </div>
           </div>
 
           {/* Card 3: New / Pending Action */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs flex items-center justify-between">
+          <div className="bg-white border border-slate-200 rounded-xl sm:rounded-2xl p-3.5 sm:p-5 shadow-xs flex items-center justify-between">
             <div>
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Pending Action</p>
-              <div className="text-2xl font-extrabold text-amber-600 mt-1">
+              <p className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">Pending</p>
+              <div className="text-lg sm:text-2xl font-extrabold text-amber-600 mt-0.5 sm:mt-1">
                 {feedbackCounts.received + feedbackCounts.underReview}
               </div>
             </div>
-            <div className="w-11 h-11 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600">
-              <Clock className="w-5 h-5" />
+            <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 shrink-0">
+              <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
           </div>
 
           {/* Card 4: Resolved Feedbacks */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs flex items-center justify-between">
+          <div className="bg-white border border-slate-200 rounded-xl sm:rounded-2xl p-3.5 sm:p-5 shadow-xs flex items-center justify-between">
             <div>
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Resolved Issues</p>
-              <div className="text-2xl font-extrabold text-emerald-600 mt-1">{feedbackCounts.resolved}</div>
+              <p className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">Resolved</p>
+              <div className="text-lg sm:text-2xl font-extrabold text-emerald-600 mt-0.5 sm:mt-1">{feedbackCounts.resolved}</div>
             </div>
-            <div className="w-11 h-11 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600">
-              <CheckCircle2 className="w-5 h-5" />
+            <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 shrink-0">
+              <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
           </div>
         </div>
 
         {/* Main Feedbacks Filter & Records Container */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs space-y-6">
+        <div className="bg-white border border-slate-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-xs space-y-4 sm:space-y-6">
           {/* Search & Filter Controls */}
-          <div className="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between">
+          <div className="flex flex-col lg:flex-row gap-3 sm:gap-4 items-stretch lg:items-center justify-between">
             {/* Search Input */}
-            <div className="relative flex-1 max-w-lg">
+            <div className="relative flex-1 max-w-full lg:max-w-lg">
               <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                placeholder="Search user name, email, LC number, subject, or message..."
+                placeholder="Search user name, email, LC number, subject..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-8 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
+                className="w-full pl-10 pr-8 py-2 sm:py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
               />
               {searchQuery && (
                 <button
@@ -248,18 +248,18 @@ export const AdminFeedbackScreen: React.FC = () => {
             {/* Filter Dropdowns & Pills */}
             <div className="flex items-center gap-2 flex-wrap">
               {/* Status Selector */}
-              <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
+              <div className="flex items-center gap-1 bg-slate-100 p-0.5 sm:p-1 rounded-xl overflow-x-auto max-w-full">
                 {(["ALL", "Received", "Under Review", "Resolved"] as const).map((st) => (
                   <button
                     key={st}
                     onClick={() => setStatusFilter(st)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
                       statusFilter === st
                         ? "bg-white text-slate-900 shadow-xs"
                         : "text-slate-500 hover:text-slate-900"
                     }`}
                   >
-                    {st === "ALL" ? "All Status" : st}
+                    {st === "ALL" ? "All" : st}
                   </button>
                 ))}
               </div>

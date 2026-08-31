@@ -29,13 +29,6 @@ export const AdminMappingScreen: React.FC = () => {
       setMappings(mappingRes.mappings);
       setManagers(managerRes.managers);
       setLcs(lcRes.lcs);
-
-      if (managerRes.managers.length > 0 && !selectedManagerId) {
-        setSelectedManagerId(String(managerRes.managers[0].id));
-      }
-      if (lcRes.lcs.length > 0 && !selectedLcId) {
-        setSelectedLcId(String(lcRes.lcs[0].id));
-      }
     } catch (err: any) {
       showNotification("Failed to load mapping data", "error");
     } finally {
@@ -58,6 +51,8 @@ export const AdminMappingScreen: React.FC = () => {
     try {
       const res = await api.assignAdminMapping(Number(selectedManagerId), Number(selectedLcId));
       showNotification(res.message, "success");
+      setSelectedManagerId("");
+      setSelectedLcId("");
       fetchData();
     } catch (err: any) {
       showNotification(err.message || "Failed to assign mapping", "error");
@@ -79,20 +74,20 @@ export const AdminMappingScreen: React.FC = () => {
   const activeMappings = mappings.filter((m) => m.is_active);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col">
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col w-full">
+      <main className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 py-5 sm:py-8 flex-1 w-full space-y-4 sm:space-y-6">
         {/* Page Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Gate Manager Assignment</h1>
-            <p className="text-slate-500 text-sm mt-1">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight">Gate Manager Assignment</h1>
+            <p className="text-slate-500 text-xs sm:text-sm mt-0.5 sm:mt-1">
               Assign gate managers to level crossings (One manager can be assigned to only one LC)
             </p>
           </div>
 
           <button
             onClick={fetchData}
-            className="self-start sm:self-auto px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition-all flex items-center gap-2 shadow-xs cursor-pointer"
+            className="self-start sm:self-auto px-3.5 py-2 sm:py-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition-all flex items-center gap-2 shadow-xs cursor-pointer"
           >
             <RefreshCw className={`w-3.5 h-3.5 text-blue-600 ${loading ? "animate-spin" : ""}`} />
             <span>Refresh</span>
@@ -100,25 +95,25 @@ export const AdminMappingScreen: React.FC = () => {
         </div>
 
         {/* Assignment Form Card */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 mb-8 shadow-xs">
-          <h2 className="text-base font-bold text-slate-900 mb-1.5 flex items-center gap-2">
-            <UserPlus className="w-5 h-5 text-blue-600" />
+        <div className="bg-white border border-slate-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-xs">
+          <h2 className="text-sm sm:text-base font-bold text-slate-900 mb-1 flex items-center gap-2">
+            <UserPlus className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 shrink-0" />
             <span>Assign Gate Manager to Level Crossing</span>
           </h2>
-          <p className="text-xs text-slate-500 mb-6">
+          <p className="text-xs text-slate-500 mb-4 sm:mb-6">
             Select a gate manager and the level crossing they are responsible for. Any previous active assignment will be replaced.
           </p>
 
-          <form onSubmit={handleAssign} className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+          <form onSubmit={handleAssign} className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4 items-end">
             {/* Manager Dropdown */}
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">
+              <label className="block text-[11px] sm:text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">
                 Select Manager
               </label>
               <select
                 value={selectedManagerId}
                 onChange={(e) => setSelectedManagerId(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-100 text-slate-900 text-sm focus:outline-none transition-all"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-100 text-slate-900 text-xs sm:text-sm focus:outline-none transition-all"
               >
                 <option value="">-- Choose Manager --</option>
                 {managers.map((m) => (
@@ -131,13 +126,13 @@ export const AdminMappingScreen: React.FC = () => {
 
             {/* LC Dropdown */}
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">
+              <label className="block text-[11px] sm:text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">
                 Select Level Crossing
               </label>
               <select
                 value={selectedLcId}
                 onChange={(e) => setSelectedLcId(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-100 text-slate-900 text-sm focus:outline-none transition-all"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-100 text-slate-900 text-xs sm:text-sm focus:outline-none transition-all"
               >
                 <option value="">-- Choose Level Crossing --</option>
                 {lcs.map((lc) => (
@@ -153,7 +148,7 @@ export const AdminMappingScreen: React.FC = () => {
               <button
                 type="submit"
                 disabled={submitting || !selectedManagerId || !selectedLcId}
-                className="w-full py-2.5 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm transition-all shadow-xs flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
+                className="w-full py-2.5 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm transition-all shadow-xs flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer active:scale-98"
               >
                 {submitting ? (
                   <span className="flex items-center gap-2">
@@ -172,16 +167,16 @@ export const AdminMappingScreen: React.FC = () => {
         </div>
 
         {/* Current Assignments Table */}
-        <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
-          <div className="p-5 border-b border-slate-100 flex items-center justify-between">
-            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Current Active Assignments</h3>
-            <span className="text-xs font-mono font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md">
+        <div className="bg-white border border-slate-200 rounded-xl sm:rounded-2xl overflow-hidden shadow-xs">
+          <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between">
+            <h3 className="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wider">Current Active Assignments</h3>
+            <span className="text-[11px] sm:text-xs font-mono font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md">
               {activeMappings.length} Active {activeMappings.length === 1 ? "Assignment" : "Assignments"}
             </span>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
+            <table className="w-full text-left text-xs sm:text-sm min-w-[550px]">
               <thead className="bg-slate-50 text-slate-500 uppercase font-mono text-[11px] tracking-wider border-b border-slate-200">
                 <tr>
                   <th className="py-3.5 px-4 font-bold">Manager</th>

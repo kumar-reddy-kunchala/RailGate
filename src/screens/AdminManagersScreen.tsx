@@ -15,6 +15,11 @@ import {
   Phone,
   Compass,
 } from "lucide-react";
+import {
+  ALL_INDIAN_STATES,
+  getDistrictsForState,
+  getDefaultZoneForLocation,
+} from "../utils/hierarchy";
 
 export const AdminManagersScreen: React.FC = () => {
   const { showNotification } = useAuth();
@@ -41,10 +46,35 @@ export const AdminManagersScreen: React.FC = () => {
     mobile: "",
     zone: "SCR",
     division: "BZA",
-    state: "Andhra Pradesh",
-    district: "Guntur",
+    state: "",
+    district: "",
     status: "ACTIVE" as "ACTIVE" | "INACTIVE",
   });
+
+  const availableDistricts = useMemo(() => {
+    return formData.state ? getDistrictsForState(formData.state) : [];
+  }, [formData.state]);
+
+  const handleStateChange = (selectedState: string) => {
+    const defaultMapping = getDefaultZoneForLocation(selectedState, "");
+    setFormData((prev) => ({
+      ...prev,
+      state: selectedState,
+      district: "",
+      zone: defaultMapping.zone,
+      division: defaultMapping.division,
+    }));
+  };
+
+  const handleDistrictChange = (selectedDistrict: string) => {
+    const defaultMapping = getDefaultZoneForLocation(formData.state, selectedDistrict);
+    setFormData((prev) => ({
+      ...prev,
+      district: selectedDistrict,
+      zone: defaultMapping.zone,
+      division: defaultMapping.division,
+    }));
+  };
 
   // Fetch managers data
   const fetchData = async () => {
@@ -100,10 +130,10 @@ export const AdminManagersScreen: React.FC = () => {
       email: "",
       password: "Gatekeeper@123",
       mobile: "",
-      zone: "SCR",
-      division: "BZA",
-      state: "Andhra Pradesh",
-      district: "Guntur",
+      zone: "",
+      division: "",
+      state: "",
+      district: "",
       status: "ACTIVE",
     });
     setIsFormModalOpen(true);
@@ -112,15 +142,16 @@ export const AdminManagersScreen: React.FC = () => {
   // Open Edit Modal
   const handleOpenEdit = (m: User) => {
     setEditingManager(m);
+    const defaultMapping = getDefaultZoneForLocation(m.state || "", m.district || "");
     setFormData({
       name: m.name || "",
       email: m.email || "",
       password: "", // leave empty to keep unchanged
       mobile: m.mobile || "",
-      zone: m.zone || "SCR",
-      division: m.division || "BZA",
-      state: m.state || "Andhra Pradesh",
-      district: m.district || "Guntur",
+      zone: m.zone || defaultMapping.zone || "SCR",
+      division: m.division || defaultMapping.division || "BZA",
+      state: m.state || "",
+      district: m.district || "",
       status: (m.status as "ACTIVE" | "INACTIVE") || "ACTIVE",
     });
     setIsFormModalOpen(true);
@@ -136,14 +167,18 @@ export const AdminManagersScreen: React.FC = () => {
 
     setActionLoading(true);
     try {
+      const defaultMapping = getDefaultZoneForLocation(formData.state.trim(), formData.district.trim());
+      const zoneVal = formData.zone.trim() || defaultMapping.zone || "SCR";
+      const divVal = formData.division.trim() || defaultMapping.division || "BZA";
+
       if (editingManager) {
         // UPDATE
         const updatePayload: any = {
           name: formData.name.trim(),
           email: formData.email.trim(),
           mobile: formData.mobile.trim(),
-          zone: formData.zone.trim(),
-          division: formData.division.trim(),
+          zone: zoneVal,
+          division: divVal,
           state: formData.state.trim(),
           district: formData.district.trim(),
           status: formData.status,
@@ -167,8 +202,8 @@ export const AdminManagersScreen: React.FC = () => {
           email: formData.email.trim(),
           password: formData.password.trim(),
           mobile: formData.mobile.trim(),
-          zone: formData.zone.trim(),
-          division: formData.division.trim(),
+          zone: zoneVal,
+          division: divVal,
           state: formData.state.trim(),
           district: formData.district.trim(),
         });
@@ -216,30 +251,30 @@ export const AdminManagersScreen: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col">
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col w-full">
+      <main className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 py-5 sm:py-8 flex-1 w-full space-y-4 sm:space-y-6">
         {/* Top Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="px-2.5 py-0.5 rounded-md bg-indigo-100 text-indigo-800 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+              <span className="px-2.5 py-0.5 rounded-md bg-indigo-100 text-indigo-800 text-[11px] sm:text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
                 <Users className="w-3.5 h-3.5" />
                 <span>Gate Managers</span>
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight">
               Gate Managers Management
             </h1>
-            <p className="text-slate-500 text-sm mt-1">
+            <p className="text-slate-500 text-xs sm:text-sm mt-0.5 sm:mt-1">
               Add, update, and delete railway gate managers
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
             <button
               onClick={fetchData}
               disabled={loading}
-              className="px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition-all flex items-center gap-2 shadow-xs cursor-pointer"
+              className="flex-1 sm:flex-none justify-center px-3.5 py-2 sm:py-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition-all flex items-center gap-2 shadow-xs cursor-pointer"
             >
               <RefreshCw className={`w-3.5 h-3.5 text-indigo-600 ${loading ? "animate-spin" : ""}`} />
               <span>Refresh</span>
@@ -247,36 +282,36 @@ export const AdminManagersScreen: React.FC = () => {
 
             <button
               onClick={handleOpenCreate}
-              className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition-all flex items-center gap-2 shadow-xs cursor-pointer"
+              className="flex-1 sm:flex-none justify-center px-4 py-2 sm:py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition-all flex items-center gap-2 shadow-xs cursor-pointer active:scale-98"
             >
               <Plus className="w-4 h-4" />
-              <span>Add Gate Manager</span>
+              <span>Add Manager</span>
             </button>
           </div>
         </div>
 
         {/* Stats Summary Bar */}
-        <div className="grid grid-cols-3 gap-3.5 mb-6">
-          <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Managers</span>
-            <div className="text-2xl font-extrabold text-slate-900 mt-1">{managers.length}</div>
+        <div className="grid grid-cols-3 gap-2 sm:gap-3.5">
+          <div className="bg-white border border-slate-200 rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-xs">
+            <span className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">Total</span>
+            <div className="text-lg sm:text-2xl font-extrabold text-slate-900 mt-0.5 sm:mt-1">{managers.length}</div>
           </div>
-          <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Active Accounts</span>
-            <div className="text-2xl font-extrabold text-emerald-600 mt-1">
+          <div className="bg-white border border-slate-200 rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-xs">
+            <span className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">Active</span>
+            <div className="text-lg sm:text-2xl font-extrabold text-emerald-600 mt-0.5 sm:mt-1">
               {managers.filter((m) => (m.status || "ACTIVE") === "ACTIVE").length}
             </div>
           </div>
-          <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Inactive Accounts</span>
-            <div className="text-2xl font-extrabold text-slate-500 mt-1">
+          <div className="bg-white border border-slate-200 rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-xs">
+            <span className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">Inactive</span>
+            <div className="text-lg sm:text-2xl font-extrabold text-slate-500 mt-0.5 sm:mt-1">
               {managers.filter((m) => (m.status || "ACTIVE") === "INACTIVE").length}
             </div>
           </div>
         </div>
 
         {/* Search and Status Filters */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6 shadow-xs flex flex-col sm:flex-row gap-3 items-center justify-between">
+        <div className="bg-white border border-slate-200 rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-xs flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
           <div className="relative flex-1 w-full">
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
@@ -297,13 +332,13 @@ export const AdminManagersScreen: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2 w-full sm:w-auto">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider shrink-0">Account Status:</span>
+            <span className="text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider shrink-0">Status:</span>
             <div className="inline-flex p-0.5 rounded-xl bg-slate-100 border border-slate-200 w-full sm:w-auto">
               {(["ALL", "ACTIVE", "INACTIVE"] as const).map((st) => (
                 <button
                   key={st}
                   onClick={() => setStatusFilter(st)}
-                  className={`flex-1 sm:flex-none px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  className={`flex-1 sm:flex-none px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
                     statusFilter === st ? "bg-white text-indigo-700 shadow-xs" : "text-slate-600 hover:text-slate-900"
                   }`}
                 >
@@ -315,21 +350,21 @@ export const AdminManagersScreen: React.FC = () => {
         </div>
 
         {/* Main Managers List Table */}
-        <div className="bg-white border border-slate-200 rounded-2xl shadow-xs overflow-hidden">
+        <div className="bg-white border border-slate-200 rounded-xl sm:rounded-2xl shadow-xs overflow-hidden">
           {loading ? (
-            <div className="p-12 text-center text-slate-500">
+            <div className="p-8 sm:p-12 text-center text-slate-500">
               <div className="w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-              Loading gate managers...
+              <span className="text-xs">Loading gate managers...</span>
             </div>
           ) : filteredManagers.length === 0 ? (
-            <div className="p-12 text-center text-slate-400">
-              <Users className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-              <p className="font-semibold text-slate-600">No Gate Managers found</p>
-              <p className="text-xs text-slate-400 mt-1">Try adjusting your search query or click "Add Gate Manager"</p>
+            <div className="p-8 sm:p-12 text-center text-slate-400">
+              <Users className="w-9 h-9 text-slate-300 mx-auto mb-2" />
+              <p className="font-semibold text-slate-600 text-sm">No Gate Managers found</p>
+              <p className="text-xs text-slate-400 mt-1">Try adjusting your search query or click "Add Manager"</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
+              <table className="w-full text-left border-collapse min-w-[600px]">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                     <th className="py-3.5 px-4">Manager Name</th>
@@ -523,61 +558,55 @@ export const AdminManagersScreen: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Railway Zone & Division */}
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                      Railway Zone
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. SCR"
-                      value={formData.zone}
-                      onChange={(e) => setFormData({ ...formData, zone: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-indigo-600 text-slate-900 text-xs font-semibold focus:outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                      Division
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. BZA"
-                      value={formData.division}
-                      onChange={(e) => setFormData({ ...formData, division: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-indigo-600 text-slate-900 text-xs font-semibold focus:outline-none"
-                    />
-                  </div>
-                </div>
-
-                {/* State & District */}
-                <div className="grid grid-cols-2 gap-3">
+                {/* Location: State & District */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
                       State
                     </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Andhra Pradesh"
+                    <select
                       value={formData.state}
-                      onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-indigo-600 text-slate-900 text-xs font-semibold focus:outline-none"
-                    />
+                      onChange={(e) => handleStateChange(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-indigo-600 text-slate-900 text-xs font-semibold focus:outline-none cursor-pointer"
+                    >
+                      <option value="">-- Select State --</option>
+                      {ALL_INDIAN_STATES.map((st) => (
+                        <option key={st} value={st}>
+                          {st}
+                        </option>
+                      ))}
+                      {formData.state && !ALL_INDIAN_STATES.includes(formData.state) && (
+                        <option value={formData.state}>{formData.state}</option>
+                      )}
+                    </select>
                   </div>
 
                   <div>
                     <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
                       District
                     </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Guntur"
+                    <select
+                      disabled={!formData.state}
                       value={formData.district}
-                      onChange={(e) => setFormData({ ...formData, district: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-indigo-600 text-slate-900 text-xs font-semibold focus:outline-none"
-                    />
+                      onChange={(e) => handleDistrictChange(e.target.value)}
+                      className={`w-full px-3 py-2 rounded-xl border text-xs font-semibold focus:outline-none transition-all ${
+                        formData.state
+                          ? "bg-slate-50 border-slate-200 focus:bg-white focus:border-indigo-600 text-slate-900 cursor-pointer"
+                          : "bg-slate-100/70 border-slate-200 text-slate-400 cursor-not-allowed"
+                      }`}
+                    >
+                      <option value="">
+                        {formData.state ? "-- Select District --" : "Select State First"}
+                      </option>
+                      {availableDistricts.map((dst) => (
+                        <option key={dst} value={dst}>
+                          {dst}
+                        </option>
+                      ))}
+                      {formData.district && !availableDistricts.includes(formData.district) && (
+                        <option value={formData.district}>{formData.district}</option>
+                      )}
+                    </select>
                   </div>
                 </div>
 

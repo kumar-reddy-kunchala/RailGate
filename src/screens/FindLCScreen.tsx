@@ -13,40 +13,10 @@ import {
 } from "lucide-react";
 import { matchesLcQuery } from "../utils/searchUtils";
 import { formatLiveRelativeTime } from "../utils/formatTime";
+import { ALL_INDIAN_STATES, STATE_DISTRICT_TOWNS } from "../utils/hierarchy";
 
-// Standard location data hierarchy
-export const LOCATION_HIERARCHY: Record<string, Record<string, string[]>> = {
-  "Andhra Pradesh": {
-    "Bapatla": [
-      "Bapatla",
-      "Chirala",
-      "Vetapalem",
-      "Repalle",
-      "Karlapalem",
-      "Karamchedu",
-      "Appikatla",
-      "Tsundur",
-    ],
-    "Guntur": [
-      "Guntur",
-      "Tenali",
-      "Mangalagiri",
-      "Ponnur",
-      "Sattenapalle",
-      "Narsaraopet",
-    ],
-    "Krishna": [
-      "Vijayawada",
-      "Machilipatnam",
-      "Gudivada",
-      "Nuzvid",
-    ],
-  },
-  "Telangana": {
-    "Hyderabad": ["Secunderabad", "Begumpet", "Kacheguda", "Malkajgiri"],
-    "Warangal": ["Warangal", "Kazipet", "Hanamkonda"],
-  },
-};
+// Standard location data hierarchy covering all states and union territories
+export const LOCATION_HIERARCHY: Record<string, Record<string, string[]>> = STATE_DISTRICT_TOWNS;
 
 export const FindLCScreen: React.FC = () => {
   const { navigateTo, searchFilter, setSearchFilter, showNotification } = useAuth();
@@ -86,7 +56,8 @@ export const FindLCScreen: React.FC = () => {
 
   // Derived available states from hierarchy & data
   const availableStates = useMemo(() => {
-    const states = new Set<string>(Object.keys(LOCATION_HIERARCHY));
+    const states = new Set<string>(ALL_INDIAN_STATES);
+    Object.keys(LOCATION_HIERARCHY).forEach((st) => states.add(st));
     lcs.forEach((lc) => {
       if (lc.state) states.add(lc.state);
     });
